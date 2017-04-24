@@ -22,7 +22,6 @@ class ServerClient(object):
         self.socket.close()
 
     def reconnect(self):
-        self.socket.close()
         self.connect(host=self.host, port=self.port)
 
     def send(self, data):
@@ -61,6 +60,44 @@ class ServerClient(object):
     def get_backups(self):
         return self.send({
             "action": "list_backups",
+        })
+
+    def get_list_backup_tasks(self):
+        return self.send({
+            'action': 'list_backup_tasks',
+        })
+
+    def add_backup_task(self,
+                        name,
+                        output_folder,
+                        input_elements=None,
+                        execute_before_scripts=None,
+                        execute_after_scripts=None,
+                        exclude=None,
+                        keep_n_last_full_backups=0,
+                        full_backup_every=0):
+
+        if exclude is None:
+            exclude = []
+        if execute_after_scripts is None:
+            execute_after_scripts = []
+        if execute_before_scripts is None:
+            execute_before_scripts = []
+        if input_elements is None:
+            input_elements = []
+
+        return self.send({
+            'action': 'add_backup_task',
+            'parameters': {
+                'name': name,
+                'output_folder': output_folder,
+                'keep_n_last_full_backups': keep_n_last_full_backups,
+                'full_backup_every': full_backup_every,
+                'input_elements': input_elements,
+                'execute_before_scripts': execute_before_scripts,
+                'execute_after_scripts': execute_after_scripts,
+                'exclude': exclude,
+            }
         })
 
     def backup(self, force_full=False):

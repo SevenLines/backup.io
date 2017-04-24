@@ -58,7 +58,7 @@ class BackupTask(object):
                 traceback.print_exc()
         return None
 
-    def _get_backup_files(self):
+    def get_backup_files(self):
         files = []
         for file in os.listdir(self._get_output_folder()):
             file_info = self._parse_file_name(file)
@@ -72,9 +72,13 @@ class BackupTask(object):
         if self.full_backup_every <= 0:
             return True
 
-        files = self._get_backup_files()
+        files = self.get_backup_files()
+        index = 0
+        for index, file in enumerate(files, 1):
+            if file['is_full']:
+                break
 
-        return len(files) % self.full_backup_every == 0
+        return index == 0 or index >= self.full_backup_every
 
     def clean(self):
         if self.keep_n_last_full_backups <= 0:
@@ -82,7 +86,7 @@ class BackupTask(object):
 
         full_counter = 0
         can_delete = False
-        for index, backup in enumerate(self._get_backup_files()):
+        for index, backup in enumerate(self.get_backup_files()):
             if can_delete:
                 os.remove(backup['path'])
                 if backup['snar_path']:
@@ -112,9 +116,11 @@ class BackupTask(object):
         files.reverse()
         return files
 
-    def restore(self, filename, restore_to=None):
+    def restore(self, filename, restore_to=None, strip_components=None):
+        os.makedirs(restore_to, exist_ok=True)
+
         file_info = self._parse_file_name(filename)
-        files = self._get_backup_files()
+        files = self.get_backup_files()
         backup_files_to_restore = []
         for file in files:
             if file['date'] <= file_info['date']:
@@ -123,20 +129,24 @@ class BackupTask(object):
                     break
         backup_files_to_restore.reverse()
         for file in backup_files_to_restore:
-            cmd = shlex.split("tar --extract -G {restore_to} --file {file}".format(
+            cmd = shlex.split("tar --extract -G {restore_to} {strip_components} --file {file}".format(
                 file=file['path'],
-                restore_to="-C {}".format(restore_to) if restore_to else ""
+                restore_to="-C {}".format(restore_to) if restore_to else "",
+                strip_components="--strip-components={}".format(
+                    strip_components) if strip_components is not None else ""
             ))
             run(cmd)
 
-    def backup(self):
+    def backup(self, force_full=False):
+        os.makedirs(self._get_output_folder(), exist_ok=True)
+
         for script in self.execute_before_scripts:
             run(shlex.split(script))
 
         dt = datetime.now()
 
         if self.input_elements:
-            is_full = self._check_is_make_full()
+            is_full = force_full or self._check_is_make_full()
 
             cmd = shlex.split(
                 "tar -cpvzf {output_folder}/{name}".format(
@@ -166,33 +176,18 @@ class BackupTask(object):
         self.clean()
 
 
-def main():
-    task = BackupTask()
-    task.full_backup_every = 3
-    task.keep_n_last_full_backups = 2
+class TestBackupTask(BackupTask):
+    full_backup_every = 3
+    keep_n_last_full_backups = 2
 
-    task.name = "tic_tac_toe"
-    task.output_folder = "backups"
-    task.execute_before_scripts = [
-        "pg_dump -d irgid -c -f /tmp/dump.sql"
+    name = "tic_tac_toe"
+    output_folder = "backups"
+    execute_before_scripts = [
+        "pg_dump -d irgid -c -f /home/m/PycharmProjects/backup.io/test/dump.sql"
     ]
-    task.input_elements = [
+    input_elements = [
         "/home/m/PycharmProjects/backup.io/test",
-        "/tmp/dump.sql"
     ]
-    task.execute_after_scripts = [
-        'rm /tmp/dump.sql'
+    execute_after_scripts = [
+        'rm /home/m/PycharmProjects/backup.io/test/dump.sql'
     ]
-    task.exclude = [
-        # "/home/m/PycharmProjects/irgid/irgid/node_modules",
-        # "/home/m/PycharmProjects/irgid/irgid/media",
-        # "/home/m/PycharmProjects/irgid/irgid/.git",
-        # "/home/m/PycharmProjects/irgid/irgid/templates/static/.webassets-cache"
-    ]
-
-    task.restore('tic_tac_toe_20170424031843.i.tar.gz', restore_to="/")
-    # task.backup()
-
-
-if __name__ == '__main__':
-    main()

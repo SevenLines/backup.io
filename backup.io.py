@@ -8,7 +8,8 @@ from core.task import BackupTask
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument("config", help="path to json file which used for task")
+    parser.add_argument("config", help="path to json file which used for task,"
+                                       "you can specify folder with backups if you only want to restore")
     parser.add_argument("action", help="action to execute, available: backup, restore, list")
     parser.add_argument("-n", "--count",
                         help="count of items to show, use only with list, pass 0 to show all",
@@ -29,18 +30,27 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    with open(args.config) as f:
-        data = json.load(f)
+    def get_task():
+        if os.path.isdir(args.config):
+            task = BackupTask().from_dir(args.config)
+        else:
+            with open(args.config) as f:
+                data = json.load(f)
+                task = BackupTask().from_data(data)
+        return task
 
-    task = BackupTask().from_data(data)
     action = args.action
     if action == 'backup':
+        with open(args.config) as f:
+            data = json.load(f)
+            task = BackupTask().from_data(data)
         task.backup(args.force_full, args.dereference)
     elif action == 'list':
         count = args.count
         table_data = [
             ['DATE', 'NAME', 'PATH', 'IS_FULL']
         ]
+        task = get_task()
         files = task.get_backup_files()
 
         if count:
@@ -57,6 +67,6 @@ if __name__ == '__main__':
         print(table.table)
     elif action == 'restore':
         if not args.restore_name:
-            print("please specify backup to restore with --restore-name (-r) argument")
-            exit(1)
+            raise Exception("please specify backup to restore with --restore-name (-r) argument")
+        task = get_task()
         task.restore(args.restore_name, args.restore_to)

@@ -31,6 +31,25 @@ class BackupTask(object):
         self.exclude = data['exclude']
         return self
 
+    def from_dir(self, directory_path):
+        self.output_folder = directory_path
+        files = os.listdir(directory_path)
+        if not files:
+            raise Exception("directory is empty")
+
+        # try to find name
+        name = None
+        for file in files:
+            match = re.match(r"(\w+)_(\d+)\.(\w+)\.tar\.gz", file)
+            if match:
+                name = match.group(1)
+                break
+        if name is None:
+            raise Exception("faile to get backupset name")
+
+        self.name = name
+        return self
+
     def _get_name(self, is_full=False, dt=datetime.now()):
         is_full_postfix = ".full" if is_full else ".i"
         name = self.name + "_" + dt.strftime(self.timestamp_format) + is_full_postfix + '.tar.gz'
@@ -190,18 +209,3 @@ class BackupTask(object):
         self.clean()
 
 
-class TestBackupTask(BackupTask):
-    full_backup_every = 3
-    keep_n_last_full_backups = 2
-
-    name = "tic_tac_toe"
-    output_folder = "backups"
-    execute_before_scripts = [
-        "pg_dump -d irgid -c -f /home/m/PycharmProjects/backup.io/test/dump.sql"
-    ]
-    input_elements = [
-        "/home/m/PycharmProjects/backup.io/test",
-    ]
-    execute_after_scripts = [
-        'rm /home/m/PycharmProjects/backup.io/test/dump.sql'
-    ]

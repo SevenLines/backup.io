@@ -20,6 +20,17 @@ class BackupTask(object):
     def __init__(self) -> None:
         super().__init__()
 
+    def from_data(self, data):
+        self.name = data['name']
+        self.output_folder = data['output_folder']
+        self.keep_n_last_full_backups = data['keep_n_last_full_backups']
+        self.full_backup_every = data['full_backup_every']
+        self.input_elements = data['input_elements']
+        self.execute_before_scripts = data['execute_before_scripts']
+        self.execute_after_scripts = data['execute_after_scripts']
+        self.exclude = data['exclude']
+        return self
+
     def _get_name(self, is_full=False, dt=datetime.now()):
         is_full_postfix = ".full" if is_full else ".i"
         name = self.name + "_" + dt.strftime(self.timestamp_format) + is_full_postfix + '.tar.gz'

@@ -1,0 +1,4 @@
+aiohttp==2.0.7
+aiohttp_jinja2
+sqlalchemy
+terminaltables

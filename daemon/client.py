@@ -13,12 +13,12 @@ class ServerClient(object):
     def __init__(self) -> None:
         self.socket = socket.socket()
 
-    def connect(self, host, port):
+    async def connect(self, host, port):
         self.socket.connect((host, port))
         self.host = host
         self.port = port
 
-    def close(self):
+    async def close(self):
         self.socket.close()
 
     def reconnect(self):
@@ -48,7 +48,7 @@ class ServerClient(object):
             data += packet
         return data
 
-    def login(self, user, password):
+    async def login(self, user, password):
         return self.send({
             "action": "login",
             "parameters": {
@@ -57,17 +57,17 @@ class ServerClient(object):
             }
         })
 
-    def get_backups(self):
+    async def get_backups(self):
         return self.send({
             "action": "list_backups",
         })
 
-    def get_list_backup_tasks(self):
+    async def get_list_backup_tasks(self):
         return self.send({
             'action': 'list_backup_tasks',
         })
 
-    def add_backup_task(self,
+    async def add_backup_task(self,
                         name,
                         output_folder,
                         input_elements=None,
@@ -100,7 +100,7 @@ class ServerClient(object):
             }
         })
 
-    def backup(self, force_full=False):
+    async def backup(self, force_full=False):
         return self.send({
             "action": 'backup',
             'parameters': {

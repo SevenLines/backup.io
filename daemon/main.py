@@ -1,7 +1,7 @@
 import asyncio
 
 from daemon.server import ServerClientProtocol
-from daemon.task import BackupTask
+from core.task import BackupTask
 
 
 def main():

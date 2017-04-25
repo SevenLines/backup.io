@@ -148,7 +148,7 @@ class BackupTask(object):
             ))
             run(cmd)
 
-    def backup(self, force_full=False):
+    def backup(self, force_full=False, dereference=False):
         os.makedirs(self._get_output_folder(), exist_ok=True)
 
         for script in self.execute_before_scripts:
@@ -174,6 +174,9 @@ class BackupTask(object):
                 snars = self._get_snars_files()
                 snar = snars[0]['path'] if snars else self._get_snars_files()
                 cmd += ['-g', snar]
+
+            if dereference:
+                cmd += ["-h", ]
 
             cmd += list(self._get_files())
 

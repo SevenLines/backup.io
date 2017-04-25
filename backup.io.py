@@ -23,6 +23,9 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--restore-to",
                         help="path to where restore backup, use only with restore action",
                         default="/")
+    parser.add_argument("-h", "--dereference",
+                        help="don't archive symlinks; archive the files they point to, the same as tar  -h flag",
+                        action='store_true')
 
     args = parser.parse_args()
 
@@ -32,7 +35,7 @@ if __name__ == '__main__':
     task = BackupTask().from_data(data)
     action = args.action
     if action == 'backup':
-        task.backup(args.force_full)
+        task.backup(args.force_full, args.dereference)
     elif action == 'list':
         count = args.count
         table_data = [

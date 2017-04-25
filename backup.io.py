@@ -23,7 +23,7 @@ if __name__ == '__main__':
     parser.add_argument("-t", "--restore-to",
                         help="path to where restore backup, use only with restore action",
                         default="/")
-    parser.add_argument("-h", "--dereference",
+    parser.add_argument("-d", "--dereference",
                         help="don't archive symlinks; archive the files they point to, the same as tar  -h flag",
                         action='store_true')
 

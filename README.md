@@ -8,24 +8,26 @@ Creating backup set config file
 
 Create config.json file:
 
-    {
-      "name": "tic_tac_toe", // backup set name
-      "full_backup_every": 7,  // create full backup on each 7-th backup archive
-      "keep_n_last_full_backups": 4, // keep 4 last full backup archives
-      "output_folder": "backups", // the output folde in which create backups archive
-      "execute_before_scripts": [
-        "pg_dump -d irgid -c -f /home/user/backup.io/test/dump.sql" // scripts to execute before taring starts
-      ],
-      "execute_after_scripts": [
-        "rm /home/user/backup.io/test/dump.sql" // scripts to execute before taring starts
-      ],
-      "exclude": [ // list of files, or dirs to exclude from set
-        "/home/user/backup.io/test/exclude.me"
-      ],
-      "input_elements": [
-        "/home/user/backup.io/test" // files or folders to add to archive
-      ]
-    }
+```javascript
+{
+  "name": "tic_tac_toe", // backup set name
+  "full_backup_every": 7,  // create full backup on each 7-th backup archive
+  "keep_n_last_full_backups": 4, // keep 4 last full backup archives
+  "output_folder": "backups", // the output folde in which create backups archive
+  "execute_before_scripts": [
+    "pg_dump -d irgid -c -f /home/user/backup.io/test/dump.sql" // scripts to execute before taring starts
+  ],
+  "execute_after_scripts": [
+    "rm /home/user/backup.io/test/dump.sql" // scripts to execute before taring starts
+  ],
+  "exclude": [ // list of files, or dirs to exclude from set
+    "/home/user/backup.io/test/exclude.me"
+  ],
+  "input_elements": [
+    "/home/user/backup.io/test" // files or folders to add to archive
+  ]
+}
+```
 
 now you can use this config to create backups
 

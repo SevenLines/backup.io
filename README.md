@@ -3,6 +3,11 @@ backup.io
 
 python tar-based backup utility
 
+Install
+-------
+
+    pip install git+https://github.com/SevenLines/backup.io.git
+
 Creating backup set config file
 -------------------------------
 
@@ -34,7 +39,7 @@ now you can use this config to create backups
 Create backup
 -------------
 
-    python backup.io.py config.json backup
+    backupio config.json backup
 
 This command creates in "backups" folder next files
 
@@ -43,7 +48,7 @@ This command creates in "backups" folder next files
 
 run command ones more:
 
-    python backup.io.py config.json backup
+    backupio config.json backup
 
 now you backups dir has this files:
 
@@ -53,7 +58,7 @@ now you backups dir has this files:
 
 you can force create full backup by passing -f flag
 
-    python backup.io.py config.json backup -f
+    backupio config.json backup -f
 
 Setting keep_n_last_full_backups=4 means that your backup dir always have no more than 4 full backups.
 I.e. if you have 4 *.full.tar.gz files in backups files, and you call backup action, then the oldest full backup
@@ -64,7 +69,7 @@ List backups sets
 
 Run
 
-    python backup.io.py config.json list
+    backupio config.json list
 
 it will return table of last 5 backups
 
@@ -76,8 +81,8 @@ it will return table of last 5 backups
 
 you can list 10 last or all backups by passing flag n with 10 and 0 respectively:
 
-    python backup.io.py config.json list -n 10
-    python backup.io.py config.json list -n 0
+    backupio config.json list -n 10
+    backupio config.json list -n 0
 
 
 Restore backup set
@@ -85,22 +90,22 @@ Restore backup set
 
 To restore backup archive use restore action with backups archive name:
 
-    python backup.io.py config.json restore -r tic_tac_toe_20170425211947.i.tar.gz
+    backupio config.json restore -r tic_tac_toe_20170425211947.i.tar.gz
 
 it will try to restore archive with all absolute paths to /
 that's mean that if you backup /home/user/test directory, restore action restore that directory exactly
 
 You can specify dir to restore by passing -t flag
 
-    python backup.io.py config.json restore -r tic_tac_toe_20170425211947.i.tar.gz -t /home/user/output
+    backupio config.json restore -r tic_tac_toe_20170425211947.i.tar.gz -t /home/user/output
 
 Restore backup set without config file
 --------------------------------------
 It's possible to restore without config file by passing path to folder with backups instead path to json config:
 
-    python backup.io.py /home/user/backups restore -r tic_tac_toe_20170425211947.i.tar.gz
+    backupio /home/user/backups restore -r tic_tac_toe_20170425211947.i.tar.gz
 
 utility tries to find out name of set, and archives in it
 You can also list backups in folder with list command:
 
-    python backup.io.py /home/user/backups list
+    backupio /home/user/backups list

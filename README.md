@@ -67,7 +67,7 @@ Run
 it will return table of last 5 backups
 
 | DATE | NAME | PATH | IS_FULL |
-| --- | --- | --- |
+| --- | --- | --- | --- |
 | 2017-04-25T21:09:35 | tic_tac_toe_20170425210935.full.tar.gz | /home/user/backups/tic_tac_toe_20170425210935.full.tar.gz | True    |
 | 2017-04-25T21:19:47 | tic_tac_toe_20170425211947.i.tar.gz    | /home/user/backups/tic_tac_toe_20170425211947.i.tar.gz    | False   |
 

@@ -4,10 +4,9 @@ import struct
 
 from sqlalchemy.orm import sessionmaker
 
-from core.task import TestBackupTask
-from daemon import db
-from daemon.helpers import json_serializer, json_date_hook
-from daemon.models import Backup
+from backupio.daemon import db
+from backupio.daemon.helpers import json_serializer, json_date_hook
+from backupio.daemon.models import Backup
 
 clients = []
 

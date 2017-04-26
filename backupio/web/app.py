@@ -2,7 +2,7 @@ import aiohttp_jinja2
 import jinja2
 from aiohttp import web
 
-from daemon.client import ServerClient
+from backupio.daemon.client import ServerClient
 
 
 @aiohttp_jinja2.template('index.html')

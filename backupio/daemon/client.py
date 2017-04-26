@@ -2,7 +2,7 @@ import json
 import socket
 import struct
 
-from daemon.helpers import json_serializer, json_date_hook
+from backupio.daemon.helpers import json_serializer, json_date_hook
 
 
 class ServerClient(object):

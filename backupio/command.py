@@ -4,7 +4,7 @@ import os
 
 from terminaltables import AsciiTable
 
-from core.task import BackupTask
+from backupio.core.task import BackupTask
 
 
 def main():

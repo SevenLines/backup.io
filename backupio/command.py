@@ -6,7 +6,8 @@ from terminaltables import AsciiTable
 
 from core.task import BackupTask
 
-if __name__ == '__main__':
+
+def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("config", help="path to json file which used for task,"
                                        "you can specify folder with backups if you only want to restore")
@@ -70,3 +71,7 @@ if __name__ == '__main__':
             raise Exception("please specify backup to restore with --restore-name (-r) argument")
         task = get_task()
         task.restore(args.restore_name, args.restore_to)
+
+
+if __name__ == '__main__':
+    main()
